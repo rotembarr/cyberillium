@@ -1,11 +1,29 @@
 version: '3'
 
+volumes:
+  mongo_storage:
+
 services:
+  mongodb:
+    container_name: mongodb
+    image: mongo:4.0.8
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=Cyberillium
+      - MONGO_INITDB_ROOT_PASSWORD=Aa123456
+    volumes:
+      - mongo_storage:/data/db
+
+
   restapi_app:
-    container_name: app_container
-
+    container_name: app
     build: ./app 
-
     ports:
       - "5000:5000"
-      - "27017:27017"
+    depends_on:
+      - mongodb
+    environment:
+      - MONGODB_CONNSTRING=mongodb://Cyberillium:Aa123456@mongodb:27017/
+
+

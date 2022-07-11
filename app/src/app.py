@@ -4,16 +4,28 @@ from bson.objectid import ObjectId
 from jsonschema import validate
 from requests import PostReqSchema, LikeReqSchema, CommentReqSchema
 import datetime as dt
+import os
+import time
 
-# Create REST-API using flask
-app = Flask(__name__)
+# Connect to mongodb. WAIT until it woken.
+cluster = MongoClient(os.environ.get('MONGODB_CONNSTRING'))
+for x in range(0,10):
+    try:
+        cluster.admin.command('ping')
+    except:
+        if x==9:
+            exit(1)
+        else:
+            time.sleep(1)
 
-# Connect to mongodb.
-cluster = MongoClient("mongodb+srv://rotem:Aa123456@cyberilliumcluster.ceo1ppf.mongodb.net/?retryWrites=true&w=majority")
+
+# Create tables.
 db = cluster["db"]
 posts = db["posts"]
 comments = db["comments"]
 
+# Create REST-API using flask
+app = Flask(__name__)
     
 ### Post-Collection handler
 def serielizePost(rec):
