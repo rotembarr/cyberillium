@@ -1,12 +1,12 @@
 from flask import Flask, request, jsonify, json
 from pymongo import MongoClient
+from bson.objectid import ObjectId
 from jsonschema import validate
 from requests import PostReqSchema, LikeReqSchema, CommentReqSchema
 import datetime as dt
 
 # Create REST-API using flask
 app = Flask(__name__)
-
 
 # Connect to mongodb.
 cluster = MongoClient("mongodb+srv://rotem:Aa123456@cyberilliumcluster.ceo1ppf.mongodb.net/?retryWrites=true&w=majority")
@@ -58,7 +58,7 @@ def add_like(id):
         req = json.loads(request.data)
         validate(instance=req, schema=LikeReqSchema)
 
-        # Check the post exists.        
+        # Check if post exists.        
         if posts.find_one({'_id':ObjectId(id)}) == None:
             return ("Bad like request: no such post", 400)
             
@@ -96,7 +96,7 @@ def add_comments(id):
         req = json.loads(request.data)
         validate(instance=req, schema=CommentReqSchema)
 
-        # Check the post exists.        
+        # Check if post exists.        
         if posts.find_one({'_id':ObjectId(id)}) == None:
             return ("Bad comment request: no such post", 400)
             
@@ -120,5 +120,5 @@ def add_comments(id):
         print("Couldn't parse comment request")
         return ("Bad comment request: wrong structure", 400)
         
-    
-
+if __name__ == "__main__":
+    app.run(debug=False)
