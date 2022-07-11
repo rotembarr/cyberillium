@@ -121,4 +121,4 @@ def add_comments(id):
         return ("Bad comment request: wrong structure", 400)
         
 if __name__ == "__main__":
-    app.run(debug=False)
+    app.run(debug=False, host='0.0.0.0')
